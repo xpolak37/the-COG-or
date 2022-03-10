@@ -10,8 +10,8 @@ setup(
                 'of the final annotated genome',
   author = 'Petra Polakovicova',
   author_email = 'xpolak37@vut.cz',
-  url = 'https://github.com/xpolak37/COG-or',
-  download_url = '',
+  url = 'https://github.com/xpolak37/the-COG-or',
+  download_url = 'https://github.com/xpolak37/the-COG-or/archive/refs/tags/0.1.tar.gz',
   keywords = ['Bacterial genome', 'Functional annotation', 'bioinformatics', 'COG'],
   install_requires=[
           'regex', 'pandas', 'Bio', 'seaborn', 'pillow'
