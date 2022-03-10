@@ -88,8 +88,9 @@ def get_legend():
     palette = palette + palette2
 
     # import description for the legend
-    CATS = pkg_resources.resource_filename(__name__, 'COGor-data/legend_text.csv')
-
+    file = pkg_resources.resource_filename(__name__, 'COGor-data/legend_text.csv')
+    CATS = (open(file, "r")).read()
+    CATS = CATS.split('\n')
     # create a white image
     img = Image.new("RGB", (1700, 2500), "white")
     image_edit = ImageDraw.Draw(img)
@@ -101,4 +102,4 @@ def get_legend():
         image_edit.rectangle((50, start, 50 + 80, start + 80), fill=(palette[ind][0], palette[ind][1], palette[ind][2]))
         image_edit.text((150, start + 15), CATS[ind], font=myFont, fill=(0, 0, 0))
         start = start + 80
-    img.save('outputs/legend.jpg')
+    img.save('legend.jpg')

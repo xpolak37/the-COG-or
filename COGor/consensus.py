@@ -17,7 +17,7 @@ def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_nc
     """
     Improve the functional annotation of the bacterial genome using a consensus of three programs:
     eggNOG-mapper, Operon-mapper and Batch CD-Search. Function saves all predicted features and COG assignments
-    and prepares the output file for visualization with DNAPlotter
+    and prepares the outputs file for visualization with DNAPlotter
     :param em_file: the path to Eggnog-mapper processed file
     :param om_file: the path to Operon-mapper processed file
     :param batch_file: the path to Batch CD-Search processed file
@@ -89,9 +89,9 @@ def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_nc
         df = get_features(gff_file, df, get_pseudo, get_ncrna)
 
     # save the created dataframe into new file and add genomic sequence
-    df.to_csv('outputs/file_to_plot.txt', sep='\t', index=False, header=False)
+    df.to_csv('file_to_plot.txt', sep='\t', index=False, header=False)
     fasta_data = (open(fasta_file, "r")).read()
-    with open('outputs/file_to_plot.txt', 'a') as my_file:
+    with open('file_to_plot.txt', 'a') as my_file:
         my_file.write('\n' + fasta_data)
     my_file.close()
 
@@ -111,6 +111,6 @@ def get_features(gff_file, df, get_pseudo, get_ncrna):
             df.loc[df['start'] == start, 'type'] = 'pseudogene'
     if get_ncrna:
         ncrnas = gff_file.loc[gff_file['type'] == 'ncRNA']
-        df = df.append(ncrnas)
+        df = pd.concat([df,ncrnas], ignore_index=True)
 
     return df
