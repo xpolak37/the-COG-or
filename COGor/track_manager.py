@@ -71,7 +71,7 @@ def track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0):
                  + NOT[i] + "\t" + ANY[i] + "\t" + KEY[i] + "\t" + QUAL[i] + "\t" + VAL[i] + \
                  "\t" + str(COL[i]) + "\n"
 
-    with open("outputs/track_template", "w") as file_to_save:
+    with open("track_template", "w") as file_to_save:
         file_to_save.write(string)
         file_to_save.close()
 
