@@ -3,14 +3,15 @@ import pandas as pd
 from Bio import SeqIO
 
 
-def em_processor(organism_name, em_file, cds_file):
+def em_processor(organism_name, em_file, cds_file, output_dir=""):
     """
-    Process the outputs file (decorated.gff) from eggNOG-mapper tool into more structured COGor-data.
+    Process the output file (decorated.gff) from eggNOG-mapper tool into more structured COGor-data.
     The outputs of this function is file in gff format that contains a suitable header with information about CDSs with
     assigned COG by eggNOG-mapper
     :type organism_name: str
     :param em_file: the path to eggNOG-mapper outputs file
     :param cds_file: the path to eggNOG-mapper input file
+    :param output_dir: the output file
     :return: processed file
     """
     em_data = pd.read_csv(em_file, sep="\t", header=None, comment="#", names=("seqname", "source", "type", "start",
@@ -54,10 +55,10 @@ def em_processor(organism_name, em_file, cds_file):
         em_data.loc[row, "attribute"] = "".join(["ID=", seq_id, ";COG=", dic['COG'], ";CAT=", dic['cat'],
                                                  ";name=", dic['name'], ";desc=", dic['desc']])
 
-    return em_data.to_csv('em_' + organism_name + '.gff', sep='\t', index=False)
+    return em_data.to_csv(output_dir + '/em_' + organism_name + '.gff', sep='\t', index=False)
 
 
-def om_processor(organism_name, orf_file, cog_file):
+def om_processor(organism_name, orf_file, cog_file, output_dir=""):
     """
     Process the outputs files (ORF_coordinates.txt and predicted_COGs.txt) from Operon-mapper into more structured COGor-data.
     The outputs of this function is file in gff format that contains a suitable header with information about all
@@ -65,6 +66,7 @@ def om_processor(organism_name, orf_file, cog_file):
     :type organism_name: str
     :param orf_file: the path to Operon-mapper outputs file ORFs_coordinates.txt
     :param cog_file: the path to Operon-mapper outputs file predicted_COGs.txt
+    :param output_dir: the output file
     :return: processed file
     """
     orf_data = pd.read_csv(orf_file, sep="\t", header=None, comment="#", names=("seqname", "source", "type", "start",
@@ -88,7 +90,7 @@ def om_processor(organism_name, orf_file, cog_file):
         except:
             orf_data.loc[row, "attribute"] = "".join(["ID=", feature_id, ";COG=", "-", ";CAT=", "-"])
 
-    return orf_data.to_csv('om_' + organism_name + '.gff', sep='\t', index=False)
+    return orf_data.to_csv(output_dir + '/om_' + organism_name + '.gff', sep='\t', index=False)
 
 
 def batch_splitter(organism_name, gene_file):
@@ -122,13 +124,14 @@ def batch_merger(organism_name, file1, file2):
         file.close()
 
 
-def batch_processor(organism_name, batch_file):
+def batch_processor(organism_name, batch_file, output_dir=""):
     """
     Process the outputs file (decorated.gff) from eggNOG-mapper tool into more structured COGor-data.
     The outputs of this function is file in gff format that contains a suitable header with information about CDSs with
     assigned COG by Batch CD-Search
     :type organism_name: str
     :param batch_file: the path to Batch CD-Search outputs file hitdata.txt
+    :param output_dir: the output file
     :return: processed file
     """
 
@@ -174,4 +177,4 @@ def batch_processor(organism_name, batch_file):
                    "score": ["."], "strand": [dic["strand"]], "frame": ["0"], "attribute": [COG]})
 
         batch_gff = pd.concat([batch_gff,new_row], ignore_index=True)
-    return batch_gff.to_csv('batch_' + organism_name + '.gff', sep='\t', index=False)
+    return batch_gff.to_csv(output_dir + '/batch_' + organism_name + '.gff', sep='\t', index=False)

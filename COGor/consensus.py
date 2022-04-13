@@ -13,7 +13,7 @@ def read_file(file, cog_pos):
     return [data, new_data]
 
 
-def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_ncrna=False, gff_file=None):
+def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_ncrna=False, gff_file=None, output_dir=""):
     """
     Improve the functional annotation of the bacterial genome using a consensus of three programs:
     eggNOG-mapper, Operon-mapper and Batch CD-Search. Function saves all predicted features and COG assignments
@@ -22,6 +22,7 @@ def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_nc
     :param om_file: the path to Operon-mapper processed file
     :param batch_file: the path to Batch CD-Search processed file
     :param fasta_file: the path to genomic sequence
+    :param output_dir: the output file
     :type get_pseudo: bool
     :type get_ncrna: bool
     :param gff_file: the path to gff file where all features are stored
@@ -89,9 +90,9 @@ def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_nc
         df = get_features(gff_file, df, get_pseudo, get_ncrna)
 
     # save the created dataframe into new file and add genomic sequence
-    df.to_csv('file_to_plot.txt', sep='\t', index=False, header=False)
+    df.to_csv(output_dir + '/file_to_plot.txt', sep='\t', index=False, header=False)
     fasta_data = (open(fasta_file, "r")).read()
-    with open('file_to_plot.txt', 'a') as my_file:
+    with open(output_dir + '/file_to_plot.txt', 'a') as my_file:
         my_file.write('\n' + fasta_data)
     my_file.close()
 

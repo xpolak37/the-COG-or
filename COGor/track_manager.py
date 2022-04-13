@@ -3,11 +3,12 @@ import pkg_resources
 from PIL import Image, ImageDraw, ImageFont
 
 
-def track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0):
+def track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0, output_dir=""):
     """
     Generate file for Track Manager option in DNAPlotter
     :param pos_track: the positions for plotting features (CDS forward strand, CDS reverse strand, pseudogenes, RNA genes)
     :param size: the size of track
+    :param output_dir: the output file
     :return: track manager file
     """
     # position vector: 27x for CDS forward strand, 27x for CDS reverse strand, 27x for pseudogenes, 3x for RNA genes
@@ -71,12 +72,12 @@ def track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0):
                  + NOT[i] + "\t" + ANY[i] + "\t" + KEY[i] + "\t" + QUAL[i] + "\t" + VAL[i] + \
                  "\t" + str(COL[i]) + "\n"
 
-    with open("track_template", "w") as file_to_save:
+    with open(output_dir + "/track_template", "w") as file_to_save:
         file_to_save.write(string)
         file_to_save.close()
 
 
-def get_legend():
+def get_legend(output_dir=""):
     """
     Create a legend for genome map
     """
@@ -102,4 +103,4 @@ def get_legend():
         image_edit.rectangle((50, start, 50 + 80, start + 80), fill=(palette[ind][0], palette[ind][1], palette[ind][2]))
         image_edit.text((150, start + 15), CATS[ind], font=myFont, fill=(0, 0, 0))
         start = start + 80
-    img.save('legend.jpg')
+    img.save(output_dir + '/legend.jpg')
