@@ -1,9 +1,9 @@
 from re import search, split
 import pandas as pd
 from Bio import SeqIO
+import os
 
-
-def em_processor(organism_name, em_file, cds_file, output_dir=""):
+def em_processor(organism_name, em_file, cds_file, output_dir=os.getcwd()):
     """
     Process the output file (decorated.gff) from eggNOG-mapper tool into more structured COGor-data.
     The outputs of this function is file in gff format that contains a suitable header with information about CDSs with
@@ -11,7 +11,7 @@ def em_processor(organism_name, em_file, cds_file, output_dir=""):
     :type organism_name: str
     :param em_file: the path to eggNOG-mapper outputs file
     :param cds_file: the path to eggNOG-mapper input file
-    :param output_dir: the output file
+    :param output_dir: the output directory
     :return: processed file
     """
     em_data = pd.read_csv(em_file, sep="\t", header=None, comment="#", names=("seqname", "source", "type", "start",
@@ -58,7 +58,7 @@ def em_processor(organism_name, em_file, cds_file, output_dir=""):
     return em_data.to_csv(output_dir + '/em_' + organism_name + '.gff', sep='\t', index=False)
 
 
-def om_processor(organism_name, orf_file, cog_file, output_dir=""):
+def om_processor(organism_name, orf_file, cog_file, output_dir=os.getcwd()):
     """
     Process the outputs files (ORF_coordinates.txt and predicted_COGs.txt) from Operon-mapper into more structured COGor-data.
     The outputs of this function is file in gff format that contains a suitable header with information about all
@@ -66,7 +66,7 @@ def om_processor(organism_name, orf_file, cog_file, output_dir=""):
     :type organism_name: str
     :param orf_file: the path to Operon-mapper outputs file ORFs_coordinates.txt
     :param cog_file: the path to Operon-mapper outputs file predicted_COGs.txt
-    :param output_dir: the output file
+    :param output_dir: the output directory
     :return: processed file
     """
     orf_data = pd.read_csv(orf_file, sep="\t", header=None, comment="#", names=("seqname", "source", "type", "start",
@@ -93,25 +93,27 @@ def om_processor(organism_name, orf_file, cog_file, output_dir=""):
     return orf_data.to_csv(output_dir + '/om_' + organism_name + '.gff', sep='\t', index=False)
 
 
-def batch_splitter(organism_name, gene_file):
+def batch_splitter(organism_name, gene_file,output_dir=os.getcwd()):
     """
     :type organism_name: str
     :param gene_file: the path to file to be split
+    :param output_dir: the output directory
     :return: two split files
     """
     records = list(SeqIO.parse(gene_file, "fasta"))
     if len(records) > 4000:
         SeqIO.write(records[0:3500], organism_name + "_genes1.fasta", "fasta")
-        SeqIO.write(records[3500:len(records)], organism_name + "_genes2.fasta", "fasta")
+        SeqIO.write(records[3500:len(records)], output_dir + organism_name + "_genes2.fasta", "fasta")
     else:
         print("The file does not need to be split because it does not contain more than 4000 sequences.")
 
 
-def batch_merger(organism_name, file1, file2):
+def batch_merger(organism_name, file1, file2,output_dir=os.getcwd()):
     """
     :type organism_name: str
     :param file1: the first annotated file from Batch-CD Search
     :param file2: the second annotated file from Batch-CD Search
+    :param output_dir: the output directory
     :return: a merged file
     """
     data1, data2 = open(file1).read(), open(file2).read()
@@ -119,12 +121,12 @@ def batch_merger(organism_name, file1, file2):
     data2 = data2[data2.index("Q#1"):len(data2)]
     data1 += data2
 
-    with open("files/" + organism_name + "_merged_hitdata.txt", "w") as file:
+    with open(output_dir + organism_name + "_merged_hitdata.txt", "w") as file:
         file.write(data1)
         file.close()
 
 
-def batch_processor(organism_name, batch_file, output_dir=""):
+def batch_processor(organism_name, batch_file, output_dir=os.getcwd()):
     """
     Process the outputs file (decorated.gff) from eggNOG-mapper tool into more structured COGor-data.
     The outputs of this function is file in gff format that contains a suitable header with information about CDSs with

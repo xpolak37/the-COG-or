@@ -1,6 +1,6 @@
 import pandas as pd
 from re import split
-
+import os
 
 def read_file(file, cog_pos):
     """
@@ -13,7 +13,7 @@ def read_file(file, cog_pos):
     return [data, new_data]
 
 
-def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_ncrna=False, gff_file=None, output_dir=""):
+def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_ncrna=False, gff_file=None, output_dir=os.getcwd()):
     """
     Improve the functional annotation of the bacterial genome using a consensus of three programs:
     eggNOG-mapper, Operon-mapper and Batch CD-Search. Function saves all predicted features and COG assignments

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
   name = 'COGor',
   packages = ['COGor'],
-  version = '0.2',
+  version = '0.3',
   license='MIT',
   description = 'Package for improving the functional annotation of bacterial genomes, classification '
                 'of protein-coding sequences into clusters of orthologous groups, and visualization '
@@ -11,7 +11,7 @@ setup(
   author = 'Petra Polakovicova',
   author_email = 'xpolak37@vut.cz',
   url = 'https://github.com/xpolak37/the-COG-or',
-  download_url = 'https://github.com/xpolak37/the-COG-or/archive/refs/tags/0.2.tar.gz',
+  download_url = 'https://github.com/xpolak37/the-COG-or/archive/refs/tags/0.3.tar.gz',
   keywords = ['Bacterial genome', 'Functional annotation', 'bioinformatics', 'COG'],
   install_requires=[
           'regex', 'pandas', 'Bio', 'seaborn', 'pillow'
@@ -23,5 +23,6 @@ setup(
     'License :: OSI Approved :: MIT License',
     'Programming Language :: Python',
   ],
-  include_package_data=True
+  include_package_data=True,
+  package_data={"": ["COGor-data/*.csv"]}
 )

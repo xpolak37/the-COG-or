@@ -1,9 +1,9 @@
 import seaborn as sns
 import pkg_resources
 from PIL import Image, ImageDraw, ImageFont
+import os
 
-
-def track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0, output_dir=""):
+def get_track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0, output_dir=os.getcwd()):
     """
     Generate file for Track Manager option in DNAPlotter
     :param pos_track: the positions for plotting features (CDS forward strand, CDS reverse strand, pseudogenes, RNA genes)
@@ -77,7 +77,7 @@ def track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0, output_dir=""):
         file_to_save.close()
 
 
-def get_legend(output_dir=""):
+def get_legend(output_dir=os.getcwd()):
     """
     Create a legend for genome map
     """
