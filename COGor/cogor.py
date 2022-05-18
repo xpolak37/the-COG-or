@@ -29,7 +29,8 @@ def cogor():
             elif opt in ["-o"]:
                 output_dir = arg
             elif opt in ["-t"]:
-                manager = True
+                if arg in ["true", "yes", "True", "t", ""]:
+                    manager = True
 
     except:
         print("Something wrong with the arguments")

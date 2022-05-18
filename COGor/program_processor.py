@@ -2,6 +2,9 @@ from re import search, split
 import pandas as pd
 from Bio import SeqIO
 import os
+import pkg_resources
+import re
+
 
 def em_processor(organism_name, em_file, cds_file, output_dir=os.getcwd()):
     """
@@ -21,12 +24,18 @@ def em_processor(organism_name, em_file, cds_file, output_dir=os.getcwd()):
     # get only header of each CDS
     desc = [record.description for record in cds_data]
     # iterate through CDSs header
+    cogs_file = pkg_resources.resource_filename(__name__, 'COGor-data/cogs.txt')
+    cat_data = (open(cogs_file, "r")).readlines()
+
     for record in desc:
         seq_id = record[0:record.index(" [")]
         # include all possible locations forward/reverse strand and join
         dic = {'pattern': "complement\((.*?)\)", 'strand': "-"} if "complement" in record else \
             {'pattern': "location=(.*?)]", 'strand': "+"}
         location = search(dic['pattern'], record).group(1)
+
+        if "<" in location:
+            location = location[1:]
 
         if "join" in location:
             location = location[:-1] if location[-1] == ")" else location
@@ -35,9 +44,12 @@ def em_processor(organism_name, em_file, cds_file, output_dir=os.getcwd()):
         else:
             location = location.split("..")
 
+        if ">" in location[1]:
+            location[1] = location[1][1:]
+
         # add the information about location to the corresponding row of eggnog-mappers outputs
         em_data.loc[em_data.seqname == seq_id, ["seqname", "strand", "start", "end"]] = \
-            [seq_id[seq_id.index("|") + 1:seq_id.index("_")], dic['strand'], location[0], location[1]]
+            [seq_id[seq_id.index("|") + 1:seq_id.index("_prot")], dic['strand'], location[0], location[1]]
 
     for row in em_data.index:
         # get only useful information about each CDS: feature_id, name, COG, COG category
@@ -46,6 +58,15 @@ def em_processor(organism_name, em_file, cds_file, output_dir=os.getcwd()):
         dic = {'COG': (attribute[attribute.index("em_OGs") + 1].split("@"))[0],
                'desc': attribute[attribute.index("em_desc") + 1],
                'cat': attribute[attribute.index("em_COG_cat") + 1]}
+        # if cog is from COG database
+        try:
+            index = [i for i, s in enumerate(cat_data) if dic["COG"] in s][0]
+            end_index = re.search('\n', cat_data[index]).start()
+            #dic["cat"] = cat_data[index][8:end_index]
+            dic["cat"] = cat_data[index][8]
+        # else - it is from eggNOG or ROG
+        except IndexError:
+            dic["cat"] = dic["cat"][0]
         try:
             dic['name'] = attribute[attribute.index("em_Preferred_name") + 1]
         except ValueError:
@@ -73,6 +94,8 @@ def om_processor(organism_name, orf_file, cog_file, output_dir=os.getcwd()):
                                                                                 "end", "score", "strand", "frame",
                                                                                 "attribute"))
     cog_data = pd.read_csv(cog_file, sep="\t", header=None, comment="#", names=("ID", "COG", "category"))
+    cogs_file = pkg_resources.resource_filename(__name__, 'COGor-data/cogs.txt')
+    cat_data = (open(cogs_file, "r")).readlines()
 
     for row in orf_data.index:
         # iterate through all features in ORF file and save the relevant information from the COG file
@@ -80,9 +103,20 @@ def om_processor(organism_name, orf_file, cog_file, output_dir=os.getcwd()):
         feature_id = attribute[attribute.index("ID") + 1]
         try:
             cog = cog_data.loc[cog_data["ID"] == feature_id, "COG"].values[0]
+
+            # if cog is from COG database
+            try:
+                index = [i for i, s in enumerate(cat_data) if cog in s][0]
+                end_index = re.search('\n', cat_data[index]).start()
+                #CAT = cat_data[index][8:end_index]
+                CAT = cat_data[index][8]
+
+            # else - it is from eggNOG or ROG
+            except IndexError:
+                CAT = (cog_data.loc[cog_data["ID"] == feature_id, "category"].values[0])[1][0]
+
             dic = {'cat': 'S', 'desc': '-'} if "ROG" in cog else \
-                {'cat': (cog_data.loc[cog_data["ID"] == feature_id, "category"].values[0])[1],
-                 'desc': cog_data.loc[cog_data["ID"] == feature_id, "category"].values[0].split("] ")[1]}
+                {'cat': CAT,'desc': cog_data.loc[cog_data["ID"] == feature_id, "category"].values[0].split("] ")[1]}
 
             orf_data.loc[row, "attribute"] = "".join(
                 ["ID=", feature_id, ";COG=", cog, ";CAT=", dic['cat'], ";desc=", dic['desc']])
@@ -143,22 +177,29 @@ def batch_processor(organism_name, batch_file, output_dir=os.getcwd()):
     batch_data = (open(batch_file).read())
     batch_data = (batch_data[batch_data.index("Q#"):len(batch_data) - 1]).split('\n')
     query = ''
+    cogs_file = pkg_resources.resource_filename(__name__, 'COGor-data/cogs.txt')
+    cogs_data = (open(cogs_file, "r")).readlines()
 
     # iterate through queries
     for row in batch_data:
         new_query = search('Q#\d+', row).group(0)
 
         # if COG is not assigned or new_line is duplicate, continue to next iteration
-        if not ('specific' in row) or query == new_query:
+        if not ('\tspecific\t' in row) or query == new_query:
             continue
 
         query = new_query
-        seq_id = row[row.index("|") + 1:row.index("_")]
+        seq_id = row[row.index("|") + 1:row.index("_prot")]
+        id = row[row.index("|") + 1:row.index(" [")]
+        id = "".join(["ID=", id])
 
         # include all possible locations forward/reverse strand and join
         dic = {'pattern': "complement\((.*?)\)", 'strand': '-'} if 'complement' in row else \
             {'pattern': "location=(.*?)]", 'strand': '+'}
         location = search(dic['pattern'], row).group(1)
+
+        if "<" in location:
+            location = location[1:]
 
         if "join" in location:
             location = location[:-1] if location[-1] == ")" else location
@@ -169,14 +210,28 @@ def batch_processor(organism_name, batch_file, output_dir=os.getcwd()):
             location = location.split("..")
             location = [location[0], location[1]]
 
+        if ">" in location[1]:
+            location[1] = location[1][1:]
+
         try:
             COG = "".join(["COG=", search("(COG\d+)", row).group(1)])
 
         except AttributeError:
             COG = "".join(["COG=", "-"])
 
+        # update in COG 2021
+        if COG == "COG=COG3512":
+            COG = "COG=COG1343"
+
+        index = [i for i, s in enumerate(cogs_data) if COG[4:] in s][0]
+        end_index = re.search('\n', cogs_data[index]).start()
+        #CAT = cogs_data[index][8:end_index]
+        CAT = cogs_data[index][8]
+        CAT = "".join(["CAT=", CAT])
+
+        attribute = id + ";" + COG + ";" + CAT
         new_row = pd.DataFrame({"seqname": [seq_id], "source": ["unknown"], "type": ["CDS"], "start": [location[0]], "end": [location[1]],
-                   "score": ["."], "strand": [dic["strand"]], "frame": ["0"], "attribute": [COG]})
+                   "score": ["."], "strand": [dic["strand"]], "frame": ["0"], "attribute": [attribute]})
 
         batch_gff = pd.concat([batch_gff,new_row], ignore_index=True)
     return batch_gff.to_csv(output_dir + '/batch_' + organism_name + '.gff', sep='\t', index=False)

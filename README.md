@@ -7,7 +7,7 @@ coding sequences, namely eggNOG-mapper, Operon-mapper,and Batch CD-Search. The C
 process these outputs and improve the annotation. It outputs a new processed file in a suitable format 
 that is ready to be visualized in DNAPlotter program. 
 
-The tools for a genome annotation annotation are available at:
+The tools for a genome annotation are available at:
 
 eggNOG-mapper: http://eggnog-mapper.embl.de/ 
 
