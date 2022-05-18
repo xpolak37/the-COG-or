@@ -1,0 +1,3 @@
+include *.png
+recursive-include COGor *.csv
+recursive-include COGor *.pyc
