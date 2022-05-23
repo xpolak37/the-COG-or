@@ -12,7 +12,7 @@ def em_processor(organism_name, em_file, cds_file, output_dir=os.getcwd()):
     The outputs of this function is file in gff format that contains a suitable header with information about CDSs with
     assigned COG by eggNOG-mapper
     :type organism_name: str
-    :param em_file: the path to eggNOG-mapper outputs file
+    :param em_file: the path to eggNOG-mapper output file
     :param cds_file: the path to eggNOG-mapper input file
     :param output_dir: the output directory
     :return: processed file
@@ -162,7 +162,7 @@ def batch_merger(organism_name, file1, file2,output_dir=os.getcwd()):
 
 def batch_processor(organism_name, batch_file, output_dir=os.getcwd()):
     """
-    Process the outputs file (decorated.gff) from eggNOG-mapper tool into more structured COGor-data.
+    Process the outputs file (hitdata.txt) from Batch CD-Search tool into more structured COGor-data.
     The outputs of this function is file in gff format that contains a suitable header with information about CDSs with
     assigned COG by Batch CD-Search
     :type organism_name: str

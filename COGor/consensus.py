@@ -2,6 +2,7 @@ import pandas as pd
 from re import split
 import os
 
+
 def read_file(file, cog_pos):
     """
     read processed file and get only location of feature and assigned COG
@@ -15,7 +16,7 @@ def read_file(file, cog_pos):
 
 def consensus(em_file, om_file, batch_file, fasta_file, get_pseudo=False, get_ncrna=False, gff_file=None, output_dir=os.getcwd()):
     """
-    Improve the functional annotation of the bacterial genome using a consensus of three programs:
+    Improves the functional annotation of the bacterial genome using a consensus of three programs:
     eggNOG-mapper, Operon-mapper and Batch CD-Search. Function saves all predicted features and COG assignments
     and prepares the outputs file for visualization with DNAPlotter
     :param em_file: the path to Eggnog-mapper processed file

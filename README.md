@@ -26,7 +26,7 @@ pip install COGor
 
 The COG-or package includes functions shown in the diagram below (yellow blocks). You can run the whole process with:
 ```
-py cogor.py -i input_path -o output_path -t
+py cogor.py -n organism_name -i input_path -o output_path -t
 ```
 
 When using COG-or via the command line, please keep in mind that the files have to be named as follows:
@@ -58,13 +58,16 @@ om_processor(organism_name, Operon_ORF_file, Operon_COG_file)
 consensus(om_file,em_file,batch_file,fasta_file, get_pseudo=True, get_ncrna=True, gff_file)
 ```
 
-
 ### VISUALIZATION
 ```
-track_manager()
+get_track_template()
 get_legend()
 ```
 
 After uploading the required file to DNAPlotter, you can obtain similar image as the one shown as an example below.
 
 <img src="genome_map.png" width="600" height="350">
+
+## Documentation
+
+For the full documentation and tutorial please see the COG-or documentation.

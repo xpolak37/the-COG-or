@@ -5,6 +5,7 @@ import track_manager
 import consensus
 import os
 
+
 def cogor():
     organism_name = None
     input_dir = os.getcwd()
@@ -55,7 +56,7 @@ def cogor():
 
         # Track manager
         if manager:
-            track_manager.get_track_manager(output_dir=output_dir)
+            track_manager.get_track_template(output_dir=output_dir)
             track_manager.get_legend(output_dir=output_dir)
 
     except:

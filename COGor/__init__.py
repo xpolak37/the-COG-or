@@ -4,6 +4,6 @@ from COGor.program_processor import batch_merger
 from COGor.program_processor import batch_splitter
 from COGor.program_processor import batch_processor
 from COGor.consensus import consensus
-from COGor.track_manager import get_track_manager
+from COGor.track_manager import get_track_template
 from COGor.consensus import get_features
 from COGor.track_manager import get_legend

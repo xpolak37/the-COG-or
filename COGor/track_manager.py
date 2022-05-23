@@ -3,13 +3,14 @@ import pkg_resources
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-def get_track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0, output_dir=os.getcwd()):
+
+def get_track_template(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0, output_dir=os.getcwd()):
     """
     Generate file for Track Manager option in DNAPlotter
     :param pos_track: the positions for plotting features (CDS forward strand, CDS reverse strand, pseudogenes, RNA genes)
     :param size: the size of track
     :param output_dir: the output file
-    :return: track manager file
+    :return: track template file
     """
     # position vector: 27x for CDS forward strand, 27x for CDS reverse strand, 27x for pseudogenes, 3x for RNA genes
     pos = [str(pos_track[0]), str(pos_track[1])] * 27
@@ -79,7 +80,7 @@ def get_track_manager(pos_track=(0.95, 0.90, 0.85, 0.80), size=10.0, output_dir=
 
 def get_legend(output_dir=os.getcwd()):
     """
-    Create a legend for genome map
+    Create a legend for the genome map
     """
     # color palette: 20 colors have been chosen from seaborn palette and other ten were selected subjectively
     palette = sns.color_palette('tab20')
