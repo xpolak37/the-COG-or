@@ -24,5 +24,5 @@ setup(
     'Programming Language :: Python',
   ],
   include_package_data=True,
-  package_data={"": ["COGor-data/legend_text.csv"]}
+  package_data={"": ["COGor-data/legend_text.csv","COGor-data/cogs.txt"]}
 )

@@ -3,7 +3,6 @@ import pandas as pd
 from Bio import SeqIO
 import os
 import pkg_resources
-import re
 
 
 def em_processor(organism_name, em_file, cds_file, output_dir=os.getcwd()):
@@ -61,8 +60,6 @@ def em_processor(organism_name, em_file, cds_file, output_dir=os.getcwd()):
         # if cog is from COG database
         try:
             index = [i for i, s in enumerate(cat_data) if dic["COG"] in s][0]
-            end_index = re.search('\n', cat_data[index]).start()
-            #dic["cat"] = cat_data[index][8:end_index]
             dic["cat"] = cat_data[index][8]
         # else - it is from eggNOG or ROG
         except IndexError:
@@ -107,8 +104,6 @@ def om_processor(organism_name, orf_file, cog_file, output_dir=os.getcwd()):
             # if cog is from COG database
             try:
                 index = [i for i, s in enumerate(cat_data) if cog in s][0]
-                end_index = re.search('\n', cat_data[index]).start()
-                #CAT = cat_data[index][8:end_index]
                 CAT = cat_data[index][8]
 
             # else - it is from eggNOG or ROG
@@ -224,8 +219,6 @@ def batch_processor(organism_name, batch_file, output_dir=os.getcwd()):
             COG = "COG=COG1343"
 
         index = [i for i, s in enumerate(cogs_data) if COG[4:] in s][0]
-        end_index = re.search('\n', cogs_data[index]).start()
-        #CAT = cogs_data[index][8:end_index]
         CAT = cogs_data[index][8]
         CAT = "".join(["CAT=", CAT])
 
